@@ -1,23 +1,28 @@
-import express, { Application, Request, Response } from "express"
-import createError from 'http-errors'
+import express, { Application, Request, Response } from 'express'
 import * as path from 'path'
 import cookieParser from 'cookie-parser'
 import logger from 'morgan'
+import cors from 'cors'
 
-import initAzureSqlServer from './db/index'
+import HttpResponse from './utils/http'
 
 import indexRouter from './routes/index'
+import authRouter from './routes/auth'
+import userRouter from './routes/user'
 
-// Connect to DB
-try {
-  initAzureSqlServer()
-  console.log('[DB] Connection Success.')
-} catch(e) {
-  console.log('[DB] Error: ' + e.message)
-}
+import initLocalPg from './db/local'
 
-// Init Express
+// connect db
+await initLocalPg()
+
 const app: Application = express()
+
+// cors
+const corsOptions = {
+  origin: process.env.NODE_APP_CORS_URL || 'http://localhost:3000',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+app.use(cors(corsOptions))
 
 app.use(logger('dev'))
 app.use(express.json())
@@ -25,30 +30,14 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
-// Set CORS Headers
-app.use(function(req: Request, res: Response, next: Function): void {
-  res.setHeader('Access-Control-Allow-Origin', process.env.NODE_APP_CORS_URL || '*')
-  res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', ['Authorization', 'Content-Type'])
-  next()
-})
-
+// routers
 app.use('/', indexRouter)
+app.use('/auth', authRouter)
+app.use('/user', userRouter)
 
-// catch 404 and forward to error handler
-app.use(function(req: Request, res: Response, next: Function): void {
-  next(createError(404))
-})
-
-// error handler
-app.use(function(err: any, req: Request, res: Response, next: Function): void {
-  // set locals, only providing error in development
-  res.locals.message = err.message
-  res.locals.error = req.app.get('env') === 'development' ? err : {}
-
-  // render the error page
-  res.status(err.status || 500)
-  res.render('error')
+// 403 all other routes
+app.use('*', function(req: Request, res: Response, next: Function): void {
+  res.send(new HttpResponse(403, 'forbidden'))
 })
 
 export default app

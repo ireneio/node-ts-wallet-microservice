@@ -30,7 +30,7 @@ function init() {
     ws.on('message', function incoming(message) {
       console.log('received: %s', message)
     })
-  
+
     ws.send('something')
   })
 
@@ -40,16 +40,16 @@ function init() {
   wss1.on('connection', function connection(ws) {
     // ...
   })
-  
+
   wss2.on('connection', function connection(ws) {
     // ...
   })
-  
+
   const server = http.createServer()
 
   server.on('upgrade', function upgrade(request, socket, head) {
     const pathname = url.parse(request.url).pathname;
-  
+
     if (pathname === '/foo') {
       wss1.handleUpgrade(request, socket, head, function done(ws) {
         wss1.emit('connection', ws, request);
@@ -64,7 +64,7 @@ function init() {
   })
 
   server.listen(8080)
-  
+
 }
 
 module.exports = init

@@ -1,4 +1,8 @@
-# node-ts-es6-wp-api-template
+# node-ts-auth-microservice
+
+## Description
+
+- A basic Node + Typescript OAuth Authentication service via JWT.
 
 ## Stack
 

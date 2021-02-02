@@ -7,7 +7,8 @@ const config = {
   externalsType: "import",
   devtool: 'inline-source-map',
   entry: {
-    'app': './bin/www.ts'
+    'app': './bin/www.ts',
+    'pgTrans': './db/transactions/index.ts'
   },
   output: {
     path: path.join(__dirname, 'dist'),
