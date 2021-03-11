@@ -1,8 +1,8 @@
-# node-ts-auth-microservice
+# node-ts-wallet-microservice
 
 ## Description
 
-- A basic Node + Typescript OAuth Authentication service via JWT.
+- A basic Wallet & Transaction service.
 
 ## Stack
 
