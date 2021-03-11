@@ -7,13 +7,14 @@ import cors from 'cors'
 import HttpResponse from './utils/http'
 
 import indexRouter from './routes/index'
-import authRouter from './routes/auth'
-import userRouter from './routes/user'
+import walletRouter from './routes/wallet'
+import transactionRouter from './routes/transaction'
 
 import initLocalPg from './db/local'
 
 // connect db
 await initLocalPg()
+
 
 const app: Application = express()
 
@@ -32,8 +33,8 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 // routers
 app.use('/', indexRouter)
-app.use('/auth', authRouter)
-app.use('/user', userRouter)
+app.use('/wallet', walletRouter)
+app.use('/transaction', transactionRouter)
 
 // 403 all other routes
 app.use('*', function(req: Request, res: Response, next: Function): void {
